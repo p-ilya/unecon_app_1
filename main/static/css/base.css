@@ -26,8 +26,8 @@ header {
     color: white;
 }
 
-body {
-    padding-left: 15px;
+.content-container {
+    padding-left: 35px;
 }
 
 .buttons-index {
@@ -39,5 +39,8 @@ body {
     background-color: #f4f5f7;
 }
 
+form {
+    padding-top: 20px;
+}
     
     
