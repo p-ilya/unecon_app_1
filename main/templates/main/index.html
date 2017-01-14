@@ -1,24 +1,23 @@
-{% load staticfiles %}
+{% extends 'main/base.html' %}
 
-<html>
-  
-  <head>
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <meta charset="utf-8"></meta>
-    <title>Unecon schedule app</title>
-  </head>
+{% block content %}
+<div id="course-subject-title">
+  <h1>Информационный сервис для преподавателя<br>
+    "Расписание занятий"
+  </h1>
+</div>
 
-  <body>
-    <div class="header" align="center">
-      Санкт-Петербургский государственный <br>
-      экономический университет
-    </div>
+<div id="course-subject">
+  <p>Приложение генерирует расписание занятий
+    для преподавателей СПбГЭУ.
+  </p>
+</div>
 
-    <div class="content">
-      Some sample content
-    </div>
+<div class="buttons-index">
+  <p>
+    <a href="{% url 'criteria' %}" class="btn btn-lg">Продолжить</a></p>
+  <p>
+    <a href="{% url 'info' %}" class="btn btn-lg">Справка</a></p>
+</div>
 
-  </body>
-</html>
-
-    
+{% endblock %}

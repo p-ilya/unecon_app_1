@@ -1,0 +1,33 @@
+{% load staticfiles %}
+
+<html>
+  
+  <head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <meta charset="utf-8"></meta>
+    <title>Unecon schedule app</title>
+  </head>
+
+  <body>
+    <header>
+      <div id="logo">
+	<img src="http://finec.unecon.ru/i/spbguef.png" alt="Логотип" />
+      </div>
+      
+      <div id="header-text" align="center">
+      Санкт-Петербургский государственный <br>
+      экономический университет
+      </div>
+    </header>
+
+    <div class="content-container">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+  </body>
+</html>
+
+    
