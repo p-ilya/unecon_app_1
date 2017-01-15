@@ -5,7 +5,7 @@
   <h3>Выберите критерии:</h3>
 </div>
 
-<form method="GET">
+<form method="POST" action="/rasp/">
   {% csrf_token %}
   {% for field in form %}
 
@@ -16,11 +16,25 @@
   {% endfor %}
 
   <div class="buttons-index">
-  <p>
-    <a href="{% url 'show_rasp' %}" class="btn btn-lg">Получить расписание</a></p>
+    <p>
+      <input type="submit" value="Получить расписание" class="btn btn-lg"/>
+    <!--<a href="{% url 'show_rasp' %}" class="btn btn-lg">Получить расписание</a>--></p>
   </div>
 </form>
 
+{% if lessons %}
+<div class="title-regular">
+  <h3>Расписание занятий с {{ form.data.date_since }} по {{ form.data.date_to }}. </h3>
+<div id="query-result">
+{% for l in lessons %}
+
+{{ l.lDate }}, {{ l.lTime }}, ауд. {{ l.lAud }} <br>
+{{ l.lName }} <br>
+{{ l.lGroup }} <br><br>
+
+{% endfor %}
+</div>
+{% endif %}
 
 
 {% endblock %}

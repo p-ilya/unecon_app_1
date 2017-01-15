@@ -23,7 +23,7 @@ class CriteriaForm(forms.Form):
                                  input_formats=['%d.%m.%Y'],
                                  label="Дата, с:")
     date_to = forms.DateField(initial=datetime.now().strftime('%d.%m.%Y'),
-                                 input_formats=['%d.%m.%Y'],
+                              input_formats=['%d.%m.%Y'],
                               label="Дата, по:")
     view_method = forms.ChoiceField(widget=RadioSelect,
                                     label="Отобразить как:",
