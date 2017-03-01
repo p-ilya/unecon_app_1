@@ -8,8 +8,8 @@ header {
 
 #logo {
     display: table-cell;
-    line-height: 0;
     width: 15%;
+    max-width: 100px;
 }
 
 #logo img {
@@ -37,14 +37,27 @@ header {
 
 .buttons-index a {
     background-color: #f4f5f7;
+    
 }
 
 form {
-    padding-top: 20px;
-    width: 70%;
+    float: left;
+    padding-top: 15px;
+    width: 40%;
+    position: fixed;
+}
+
+.title-regular {
+    position: relative;
+}
+
+.field-wrapper {
+    padding: 10px;
 }
 
 #query-result {
+    padding-top: 15px;
+    margin-left: 41%;
     color: black;
 }
 

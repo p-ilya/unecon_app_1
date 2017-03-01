@@ -1,12 +1,14 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<div class="title-reqular">
-  <h3>Выберите критерии:</h3>
-</div>
+
 
 <form method="POST" action="/rasp/">
   {% csrf_token %}
+  <div class="title-reqular">
+    <h3>Выберите критерии:</h3>
+  </div>
+
   {% for field in form %}
 
   <div class="field-wrapper">
@@ -23,14 +25,15 @@
 </form>
 
 {% if lessons %}
-<div class="title-regular">
-  <h3>Расписание занятий с {{ form.data.date_since }} по {{ form.data.date_to }}. </h3>
+
 <div id="query-result">
+  <div class='title-reqular'><h3>Расписание занятий с {{ form.data.date_since }} по {{ form.data.date_to }}. </h3></div>
+
 {% for l in lessons %}
 
 {{ l.lDate }}, {{ l.lTime }}, ауд. {{ l.lAud }} <br>
 {{ l.lName }} <br>
-{{ l.lGroup }} <br><br>
+группа {{ l.lGroup }} <br><br>
 
 {% endfor %}
 </div>
