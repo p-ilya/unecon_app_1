@@ -2,13 +2,13 @@ header {
     width: 100%;
     height: 100px;
     background: #008290;
-    font-size: 20px;
+    font-size: 18px;
     position: static;
 }
 
 #logo {
     display: table-cell;
-    width: 15%;
+    width: 100px;
     max-width: 100px;
 }
 
@@ -43,7 +43,8 @@ header {
 form {
     float: left;
     padding-top: 15px;
-    width: 40%;
+    width: 30%;
+    min-width: 200px;
     position: fixed;
 }
 
@@ -57,7 +58,7 @@ form {
 
 #query-result {
     padding-top: 15px;
-    margin-left: 41%;
+    margin-left: 31%;
     color: black;
 }
 

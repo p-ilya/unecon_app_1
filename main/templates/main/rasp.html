@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -8,7 +9,7 @@
   <div class="title-reqular">
     <h3>Выберите критерии:</h3>
   </div>
-
+  
   {% for field in form %}
 
   <div class="field-wrapper">
@@ -16,7 +17,8 @@
   </div>
 
   {% endfor %}
-
+  
+  <!--{{ form.as_p }}-->
   <div class="buttons-index">
     <p>
       <input type="submit" value="Получить расписание" class="btn btn-lg"/>
@@ -27,17 +29,56 @@
 {% if lessons %}
 
 <div id="query-result">
-  <div class='title-reqular'><h3>Расписание занятий с {{ form.data.date_since }} по {{ form.data.date_to }}. </h3></div>
-
-{% for l in lessons %}
-
+  <div class='title-reqular'>
+    <h3>Расписание занятий с {{ form.data.date_since }} по {{ form.data.date_to }}. </h3>
+  </div>
+  {% if method == '1' %}
+    {% for l in lessons %}
+<p>
 {{ l.lDate }}, {{ l.lTime }}, ауд. {{ l.lAud }} <br>
 {{ l.lName }} <br>
 группа {{ l.lGroup }} <br><br>
+</p>  
+    {% empty %}
+    Расписание на эти дни не найдено.
 
-{% endfor %}
+    {% endfor %}
+
+  {% elif method == '2' %}
+  <div class="table-responsive">
+  <table class="table">
+    <thead><tr>
+      <th>Дата</th>
+      <th>Время</th>
+      <th>Аудитория</th>
+      <th>Группа</th>
+      <th>Дисциплина</th>
+    </tr></thead>
+
+    <tbody>
+    {% for l in lessons %}
+    <tr>
+      <th>{{ l.lDate }}</th>
+      <th>{{ l.lTime }}</th>
+      <th>{{ l.lAud }}</th>
+      <th>{{ l.lGroup }}</th>
+      <th>{{ l.lName }}</th>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {% else %}
+  <p>Что-то пошло не так.</p>
+  {% endif %}  
+  
 </div>
+
 {% endif %}
 
+{% endblock %}
 
+{% block footer %}
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+{{ form.media }}
 {% endblock %}
