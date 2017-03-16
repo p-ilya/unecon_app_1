@@ -18,10 +18,11 @@ def rasp(request):
             method = form.cleaned_data.get('view_method')
             lessons = Lesson.objects.filter(lTeacher_id=teacher,lDate__range=(since,to)).order_by('lDate', 'lTime')
             
+            #  отладка
             #print(teacher)
             #print('{0} - {1}'.format(since, to))
-            print('METHOD '+method)
-            print(lessons)
+            #print('METHOD '+method)
+            #print(lessons)
             
             return render(request, 'main/rasp.html', {'form': form,
                                                       'lessons': lessons,

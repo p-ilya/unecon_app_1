@@ -1,0 +1,31 @@
+form {
+    float: top;
+    padding-top: 15px;
+    width: 100%;
+    min-width: 200px;
+    background: #FFFFFF;
+}
+
+.title-regular {
+    position: relative;
+}
+
+.field-wrapper {
+    padding: 10px;
+    display: inline;
+}
+
+#criteria-table th ul li {
+    display: inline-block;
+}
+
+#criteria-form.stick-top {
+    position: fixed;
+    top: 0;
+}
+
+#query-result {
+    padding-top: 15px;
+    margin-left: 11%;
+    color: black;
+}

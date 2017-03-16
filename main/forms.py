@@ -1,5 +1,5 @@
 from dal import autocomplete
-from datetime import datetime
+from datetime import datetime, timedelta
 from django import forms
 from django.forms.widgets import RadioSelect
 
@@ -34,7 +34,7 @@ class CriteriaForm(forms.Form):
         label="Дата, с:")
 
     date_to = forms.DateField(
-        initial=datetime.now().strftime('%d.%m.%Y'),
+        initial=(datetime.now()+timedelta(days=7)).strftime('%d.%m.%Y'),
         input_formats=['%d.%m.%Y'],
         label="Дата, по:")
 

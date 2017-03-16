@@ -40,26 +40,6 @@ header {
     
 }
 
-form {
-    float: left;
-    padding-top: 15px;
-    width: 30%;
-    min-width: 200px;
-    position: fixed;
-}
 
-.title-regular {
-    position: relative;
-}
-
-.field-wrapper {
-    padding: 10px;
-}
-
-#query-result {
-    padding-top: 15px;
-    margin-left: 31%;
-    color: black;
-}
 
     
