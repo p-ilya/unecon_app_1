@@ -3,101 +3,109 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/rasp.css' %}">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="{% static 'js/rasp.js' %}"></script>
 {% endblock %}
 
-{% block content %}
 
+{% block content %}
 
 <form method="POST" action="/rasp/" id="criteria-form">
   {% csrf_token %}
   
-  <!--div class="title-reqular">
-    <h3>Выберите критерии:</h3>
-  </div-->
-  <table id="criteria-table">
+  <div id="criteria">
   
-  <tr>
     {% for field in form %}
-    <th>{{ field.label_tag }}</th>
-    {% endfor %}
-  </tr>
-  
-  <tr>
-  {% for field in form %}
-  
-  <!--div class="field-wrapper">
-    {{ field.label_tag }} {{ field }}
-  </div-->
-  
-  <th>{{ field }}</th>
-  
-  {% endfor %}
-  </tr>
-  
-  </table>
 
-  <div class="buttons-index">
-    <p>
-      <input type="submit" value="Получить расписание" class="btn btn-lg"/>
-    <!--<a href="{% url 'show_rasp' %}" class="btn btn-lg">Получить расписание</a>--></p>
+      <div class="field-wrapper">
+        <table class="form-field">
+          <tr><th>{{ field.label_tag }}</th></tr>
+          <tr><td>{{ field }}</td></tr>
+        </table> 
+      </div>
+    
+    {% endfor %}
+  
+    <div class="field-wrapper">
+      <input type="submit" value="Получить расписание" class="btn btn-sm"/>
+    </div>
+
   </div>
+
 </form>
 
-{% if lessons %}
+{% if lessons|length >= 0 %}
 
-<div id="query-result">
-  <div class='title-reqular'>
-    <h3>Расписание занятий с {{ form.data.date_since }} по {{ form.data.date_to }}. </h3>
-  </div>
+  <div id="query-result">
+  
+  {% if lessons %}
+    <div class='title-reqular'>
+      <h3>Расписание занятий с {{ form.data.date_since }} по {{ form.data.date_to }}. </h3>
+    </div>
+  {% endif %}
+
   {% if method == '1' %}
     {% for l in lessons %}
-<p>
-{{ l.lDate }}, {{ l.lTime }}, ауд. {{ l.lAud }} <br>
-{{ l.lName }} <br>
-группа {{ l.lGroup }} <br><br>
-</p>  
+      <p>
+      {{ l.lDate }}, {{ l.lTime }}, ауд. {{ l.lAud }} <br>
+      {{ l.lName }} <br>
+      группа {{ l.lGroup }} <br><br>
+      </p>  
+    
     {% empty %}
-    Расписание на эти дни не найдено.
+    <h4>Расписание на эти дни не найдено.</h4>
 
     {% endfor %}
 
   {% elif method == '2' %}
-  <div class="table-responsive">
-  <table class="table">
-    <thead><tr>
-      <th>Дата</th>
-      <th>Время</th>
-      <th>Аудитория</th>
-      <th>Группа</th>
-      <th>Дисциплина</th>
-    </tr></thead>
+    <div class="table-responsive">
+    <table class="table">
+      <thead><tr>
+        <th>Дата</th>
+        <th>Время</th>
+        <th>Аудитория</th>
+        <th>Группа</th>
+        <th>Дисциплина</th>
+      </tr></thead>
 
-    <tbody>
-    {% for l in lessons %}
-    <tr>
-      <th>{{ l.lDate }}</th>
-      <th>{{ l.lTime }}</th>
-      <th>{{ l.lAud }}</th>
-      <th>{{ l.lGroup }}</th>
-      <th>{{ l.lName }}</th>
-    </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+      <tbody>
+      {% for l in lessons %}
+        <tr>
+          <td>{{ l.lDate }}</td>
+          <td>{{ l.lTime }}</td>
+          <td>{{ l.lAud }}</td>
+          <td>{{ l.lGroup }}</td>
+          <td>{{ l.lName }}</td>
+        </tr>
+      
+      {% empty %}
+        <h4>Расписание на эти дни не найдено.</h4>
+
+      {% endfor %}
+      </tbody>
+    </table>
 
   {% else %}
-  <p>Что-то пошло не так.</p>
+    <p>Здесь будет отображаться расписание.</p>
   {% endif %}  
   
-</div>
+  </div>
+
+{% else %}
+  <p>{{ lessons|length }}</p>
+  <h4>Расписание на эти дни не найдено.</h4>
 
 {% endif %}
 
+
 {% endblock %}
 
+
 {% block footer %}
-<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+<!--script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script-->
 {{ form.media }}
 {% endblock %}

@@ -1,4 +1,5 @@
 from dal import autocomplete
+from datetime import datetime
 from django.shortcuts import render, redirect
 from .forms import CriteriaForm
 from .models import Lesson, Teacher
@@ -34,18 +35,22 @@ def rasp(request):
 def info(request):
     return render(request, 'main/info.html', {})
 
-def show_rasp(request,lessons):
+def show_rasp(request,since,to,teacher,method):
     # add method argument here
-    # lessons = Lesson.objects.filter(lTeacher=teacher,lDate__range=(since,to))
-    
-    return render(request, 'main/show_rasp.html', {'lessons': lessons})
+    lessons = Lesson.objects.filter(lTeacher=teacher,lDate__range=(since,to)).order_by('lDate', 'lTime')
+    d_since = datetime.strptime(since, "%Y-%m-%d")
+    d_to = datetime.strptime(to, "%Y-%m-%d")
+    t = Teacher.objects.get(pk=teacher)
+    t_format ='{0} {1}.{2}.'.format(
+        t.tName.split(sep=' ')[0],
+        t.tName.split(sep=' ')[1][0],
+        t.tName.split(sep=' ')[2][0])
+
+    return render(request, 'main/show_rasp.html', {'lessons': lessons,'method': method, 'since': d_since, 'to': d_to,'t':t_format })
 
 class TeacherAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        ''' NOTE: right now teacher queryset 
-        is exposed through public URL.
-        Make a request.user.is_authenticated() check
-        once the user system is done. '''
+
         qs = Teacher.objects.all()
 
         if self.q:

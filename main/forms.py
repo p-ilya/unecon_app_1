@@ -1,7 +1,8 @@
 from dal import autocomplete
 from datetime import datetime, timedelta
+
 from django import forms
-from django.forms.widgets import RadioSelect
+from django.forms.widgets import RadioSelect, SelectDateWidget
 
 from .models import Teacher
 
@@ -31,12 +32,23 @@ class CriteriaForm(forms.Form):
     date_since = forms.DateField(
         initial=datetime.now().strftime('%d.%m.%Y'),
         input_formats=['%d.%m.%Y'],
-        label="Дата, с:")
+        label="Дата, с:",
+        #  Better for mobile devices?
+        #  widget=SelectDateWidget(years=[2016,2017,2018,2019,2020,2021])
+        widget=forms.TextInput(
+            attrs={
+            'class': 'datepicker',
+        })
+        )
 
     date_to = forms.DateField(
         initial=(datetime.now()+timedelta(days=7)).strftime('%d.%m.%Y'),
         input_formats=['%d.%m.%Y'],
-        label="Дата, по:")
+        label="Дата, по:",
+        widget=forms.TextInput(attrs={
+            'class': 'datepicker',
+        })
+        )
 
     view_method = forms.ChoiceField(
         widget=RadioSelect,
