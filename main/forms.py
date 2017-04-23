@@ -59,5 +59,6 @@ class CriteriaForm(forms.Form):
 class ExportForm(forms.Form):
     """Footer form for export features"""
     result_url = forms.URLField(
-        label='Прямая ссылка:')
+        label='Прямая ссылка:',
+        required=False,)
         

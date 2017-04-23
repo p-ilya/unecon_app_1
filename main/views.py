@@ -11,8 +11,7 @@ def index(request):
 
 def rasp(request):
     if request.method=="POST":
-        form = CriteriaForm(request.POST, prefix="cr")
-        export = ExportForm(prefix="exp")
+        form = CriteriaForm(request.POST)
 
         if form.is_valid():
             teacher = form.cleaned_data.get('ch_teacher')
@@ -27,23 +26,28 @@ def rasp(request):
                     'since': datetime.strftime(since, '%Y-%m-%d'), 
                     'to': datetime.strftime(to, '%Y-%m-%d'), 
                     'teacher': teacher.id, 
-                    'method': method})
-            export.fields['result_url'].initial = request.build_absolute_uri(direct_url)
+                    'method': method
+                }
+            )
+            full_direct_url = request.build_absolute_uri(direct_url)
+            export = ExportForm(initial={'result_url': full_direct_url }, prefix="exp")
             #  отладка
             #print(teacher)
             #print('{0} - {1}'.format(since, to))
             #print('METHOD '+method)
             #print(lessons)
-            print(export.as_table())
 
-            return render(request, 'main/rasp.html', {'form': form,
-                                                      'lessons': lessons,
-                                                      'method': method,
-                                                      'export_form': export,})
+            context = {
+                'form': form,
+                'lessons': lessons,
+                'method': method,
+                'export': export,
+            }
+
+            return render(request, 'main/rasp.html', context)    
     else:        
         form = CriteriaForm()
-        export = ExportForm()
-    return render(request, 'main/rasp.html', {'form': form, 'export': export })
+    return render(request, 'main/rasp.html', {'form': form, })
 
 def info(request):
     return render(request, 'main/info.html', {})
@@ -58,19 +62,29 @@ def show_rasp(request,since,to,teacher,method):
     t_format ='{0} {1}.{2}.'.format(
         t.tName.split(sep=' ')[0],
         t.tName.split(sep=' ')[1][0],
-        t.tName.split(sep=' ')[2][0])
+        t.tName.split(sep=' ')[2][0]
+    )
     
     export = ExportForm()
     direct_url = reverse(
-                'show_rasp',
-                kwargs={
-                    'since': since, 
-                    'to': to, 
-                    'teacher': teacher, 
-                    'method': method})
+        'show_rasp',
+        kwargs={
+            'since': since, 
+            'to': to, 
+            'teacher': teacher, 
+            'method': method
+        })
     export.fields['result_url'].initial = request.build_absolute_uri(direct_url)
+    print(export.as_table())
     
-    context = {'lessons': lessons,'method': method, 'since': d_since, 'to': d_to,'t':t_format, 'export': export }
+    context = {
+        'lessons': lessons,
+        'method': method, 
+        'since': d_since, 
+        'to': d_to,
+        't':t_format, 
+        'export': export 
+    }
     return render(request, 'main/show_rasp.html', context)
 
 class TeacherAutocomplete(autocomplete.Select2QuerySetView):
