@@ -100,12 +100,18 @@
   
   </div>
 
+  <div id="export">
+    <form id='export-form'>
+      {{ export.as_table }}
+      <input type="submit" value="Submit" class="btn btn-default" />
+    </form>
+  </div>
+
 {% else %}
   <p>{{ lessons|length }}</p>
   <h4>Расписание на эти дни не найдено.</h4>
 
 {% endif %}
-
 
 {% endblock %}
 

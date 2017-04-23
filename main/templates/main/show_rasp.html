@@ -31,7 +31,7 @@
       <thead><tr>
         <th>Дата</th>
         <th>Время</th>
-        <th>Аудитория</th>
+        <th>Ауд.</th>
         <th>Группа</th>
         <th>Дисциплина</th>
       </tr></thead>
@@ -58,6 +58,13 @@
     <p>Что-то пошло не так.</p>
   
   {% endif %}  
+</div>
+
+<div id="export">
+    <form id='export-form'>
+      {{ export.as_table }}
+      <input type="submit" value="Submit" class="btn btn-default" />
+    </form>
 </div>
 
 {% endblock %}

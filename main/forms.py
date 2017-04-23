@@ -55,3 +55,9 @@ class CriteriaForm(forms.Form):
         label="Отобразить как:",
         choices=[('1', 'список'),('2', 'таблицу')],
         initial='1')
+
+class ExportForm(forms.Form):
+    """Footer form for export features"""
+    result_url = forms.URLField(
+        label='Прямая ссылка:')
+        
