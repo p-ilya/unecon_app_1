@@ -27,7 +27,7 @@ def rasp(request):
             
             return render(request, 'main/rasp.html', {'form': form,
                                                       'lessons': lessons,
-                                                      'method': method })
+                                                      'method': method,})
     else:        
         form = CriteriaForm()
     return render(request, 'main/rasp.html', {'form': form })

@@ -1,10 +1,6 @@
 
 $(document).ready(function() {
-	/*
-	$.datepicker.setDefaults(
-		{ dateFormat:"dd.mm.yy"}
-		);
-	*/
+	
 	var $window =  $(window);
 	var $criteriaForm = $('#criteria-form');
 	var top = $($criteriaForm).offset().top;
