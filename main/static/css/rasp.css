@@ -39,6 +39,12 @@
     color: black;
 }
 
+#export-form {
+    margin-left: 3.5%;
+    margin-right: 3%;
+    padding-left: 10px;
+}
+
 @media screen and (max-width: 550px) {
     html {
         font-size: 75%;

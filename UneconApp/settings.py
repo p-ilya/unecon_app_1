@@ -122,3 +122,11 @@ DATE_FORMAT = 'd.m.y D'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# E-mailing settings
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_HOST_USER = 'unecon.schedule@yandex.ru'
+EMAIL_HOST_PASSWORD = 'M163rKZb'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

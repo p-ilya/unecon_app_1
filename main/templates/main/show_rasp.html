@@ -7,11 +7,11 @@
 
 
 <div id="query-result">
-  {% if lessons %}    
+      
     <div class='title-reqular'>
       <h3>{{ t }}, расписание с {{ since|date:"d.m.Y" }} по {{ to|date:"d.m.Y" }}. </h3>
     </div>
-  {% endif %}
+  
 
   {% if method == '1' %}
     {% for l in lessons %}
@@ -20,6 +20,7 @@
       {{ l.lName }} <br>
       группа {{ l.lGroup }} <br><br>
       </p>  
+    
     {% empty %}
     <h4>Расписание на эти дни не найдено.</h4>
 
@@ -62,12 +63,14 @@
   {% endif %}  
 </div>
 
-<div id="export">
+{% if export %}
+  <div id="export">
     <form id='export-form'>
       {{ export.as_table }}
-      <input type="submit" value="Submit" class="btn btn-default" />
+      <input type="submit" value="Отправить" class="btn btn-sm" />
     </form>
-</div>
+  </div>
+{% endif %}
 
 {% endblock %}
 

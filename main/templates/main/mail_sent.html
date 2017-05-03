@@ -1,0 +1,12 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+
+An e-mail has been sent to {{ mailto }}. Yay!
+
+{% endblock %}
+
+{% block footer %}
+{{ form.media }}
+{% endblock %}

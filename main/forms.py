@@ -61,4 +61,4 @@ class ExportForm(forms.Form):
     result_url = forms.URLField(
         label='Прямая ссылка:',
         required=False,)
-        
+    email_address = forms.EmailField(label='Адрес e-mail:')

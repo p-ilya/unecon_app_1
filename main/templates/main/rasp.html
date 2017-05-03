@@ -100,12 +100,14 @@
   
   </div>
 
+  {% if export %}
   <div id="export">
     <form id='export-form'>
       {{ export.as_table }}
-      <!--input type="submit" value="Submit" class="btn btn-default" /-->
+      <input type="submit" value="Отправить" class="btn btn-sm" />
     </form>
   </div>
+  {% endif %}
 
 {% else %}
   <p>{{ lessons|length }}</p>

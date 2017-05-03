@@ -2,6 +2,7 @@ from dal import autocomplete
 from datetime import datetime
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
+from django.core.mail import send_mail
 from .forms import CriteriaForm, ExportForm
 from .models import Lesson, Teacher
 
@@ -11,6 +12,8 @@ def index(request):
 
 def rasp(request):
     if request.method=="POST":
+        export = ExportForm(request.POST)
+        print(request.POST)
         form = CriteriaForm(request.POST)
 
         if form.is_valid():
@@ -44,7 +47,11 @@ def rasp(request):
                 'export': export,
             }
 
-            return render(request, 'main/rasp.html', context)    
+            return render(request, 'main/rasp.html', context)
+
+        if export.is_valid():
+            print(export.cleaned_data)
+
     else:        
         form = CriteriaForm()
     return render(request, 'main/rasp.html', {'form': form, })
@@ -75,7 +82,7 @@ def show_rasp(request,since,to,teacher,method):
             'method': method
         })
     export.fields['result_url'].initial = request.build_absolute_uri(direct_url)
-    print(export.as_table())
+    #print(export.as_table())
     
     context = {
         'lessons': lessons,
@@ -87,6 +94,7 @@ def show_rasp(request,since,to,teacher,method):
     }
     return render(request, 'main/show_rasp.html', context)
 
+# autocomplete view
 class TeacherAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
 
@@ -96,3 +104,9 @@ class TeacherAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(tName__istartswith=self.q)
 
         return qs
+
+# Текстовый e-mail
+def send_text_email(request, mailto):
+    content = 'TEST MAIL'
+    res = send_mail('Расписание занятий СПбГЭУ', content, 'unecon.schedule@yandex.ru', ['pyatinson@gmail.com',])
+    return render(request, 'main/mail_sent.html', {'mailto': mailto })
