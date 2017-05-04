@@ -1,6 +1,8 @@
 from dal import autocomplete
 from datetime import datetime
+from urllib.request import urlopen
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 from .forms import CriteriaForm, ExportForm
@@ -12,8 +14,6 @@ def index(request):
 
 def rasp(request):
     if request.method=="POST":
-        export = ExportForm(request.POST)
-        print(request.POST)
         form = CriteriaForm(request.POST)
 
         if form.is_valid():
@@ -48,9 +48,6 @@ def rasp(request):
             }
 
             return render(request, 'main/rasp.html', context)
-
-        if export.is_valid():
-            print(export.cleaned_data)
 
     else:        
         form = CriteriaForm()
@@ -106,7 +103,33 @@ class TeacherAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 # Текстовый e-mail
+'''
 def send_text_email(request, mailto):
     content = 'TEST MAIL'
     res = send_mail('Расписание занятий СПбГЭУ', content, 'unecon.schedule@yandex.ru', ['pyatinson@gmail.com',])
     return render(request, 'main/mail_sent.html', {'mailto': mailto })
+'''
+def send_text_email(request):
+    if request.method=="POST":
+        export = ExportForm(request.POST)
+        addr = request.POST.get('exp-email_address','fuckup')
+        cont = request.POST.get('exp-result_url','fuckup')
+        print(addr)
+        print(cont)
+        print(export['email_address'].value())
+        print(export.is_valid())
+        if export.is_valid():
+            print('valid export form')
+            content = 'TEST MAIL'
+            #res = send_mail('Расписание занятий СПбГЭУ', content, 'unecon.schedule@yandex.ru', ['pyatinson@gmail.com',])
+            #return render(request, 'main/mail_sent.html', { 'export': export })
+            return HttpResponse("VALID EXPORT")
+        else:
+            print("FORM ERRORS: \n"+str(export.errors))
+            content = urlopen(cont).read()
+            res = send_mail('Расписание занятий СПбГЭУ', content.decode('utf-8'), 'unecon.schedule@yandex.ru', [addr,])
+            return HttpResponse("INVALID EXPORT")
+    else:
+        print('get method used')
+        #return render(request, 'main/mail_sent.html',)
+        return HttpResponse("GET EXPORT")

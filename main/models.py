@@ -53,6 +53,7 @@ class Lesson(models.Model):
     lTime = models.CharField(max_length=45)
     lAud = models.CharField('Аудитория',
                             max_length=45)
+    lComment = models.TextField()
 
     def __str__(self):
         return ('{0} {1}, {2}'.format(self.lDate,

@@ -3,7 +3,15 @@
 
 {% block content %}
 
-An e-mail has been sent to {{ mailto }}. Yay!
+<div id="export">
+	<form id='export-form' method="POST" action="/send/text/">
+	  {% csrf_token %}
+	  {{ export.as_table }}
+	  <input type="submit" value="Отправить" class="btn btn-sm" />
+	</form>
+</div>
+
+An e-mail has been sent to. Yay!
 
 {% endblock %}
 

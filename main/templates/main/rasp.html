@@ -54,8 +54,11 @@
       {{ l.lDate }}, {{ l.lTime }}, ауд. {{ l.lAud }} <br>
       {{ l.lName }} <br>
       группа {{ l.lGroup }} 
-      {% if l.lComment %}
+      {% if l.lComment|length > 1 %}
+      <br>
+      <strong>
       Комментарий: {{ l.lComment }}
+      </strong>
       {% endif %} <br><br>
       </p>  
     
@@ -84,7 +87,7 @@
           <td>{{ l.lAud }}</td>
           <td>{{ l.lGroup }}</td>
           <td>{{ l.lName }}</td>
-          <td>{{ l.lComment }}</td>
+          <td class='comment-td'>{{ l.lComment }}</td>
         </tr>
       
       {% empty %}
@@ -102,7 +105,8 @@
 
   {% if export %}
   <div id="export">
-    <form id='export-form'>
+    <form id='export-form' method="POST" action="/send/text/">
+      {% csrf_token %}
       {{ export.as_table }}
       <input type="submit" value="Отправить" class="btn btn-sm" />
     </form>

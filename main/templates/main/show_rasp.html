@@ -18,7 +18,12 @@
       <p>
       {{ l.lDate }}, {{ l.lTime }}, ауд. {{ l.lAud }} <br>
       {{ l.lName }} <br>
-      группа {{ l.lGroup }} <br><br>
+      группа {{ l.lGroup }}
+      {% if l.lComment|length > 1 %}
+      <br><strong>
+      Комментарий: {{ l.lComment }}
+      </strong>
+      {% endif %} <br><br>
       </p>  
     
     {% empty %}
