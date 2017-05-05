@@ -1,12 +1,16 @@
 from dal import autocomplete
 from datetime import datetime
-from urllib.request import urlopen
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 from .forms import CriteriaForm, ExportForm
 from .models import Lesson, Teacher
+
+def filter_lessons(teacher, since, to):
+    lessons = Lesson.objects.filter(lTeacher_id=teacher,lDate__range=(since,to)).order_by('lDate', 'lTime')
+    return lessons
 
 # Create your views here.
 def index(request):
@@ -21,7 +25,7 @@ def rasp(request):
             since = form.cleaned_data.get('date_since')
             to = form.cleaned_data.get('date_to')
             method = form.cleaned_data.get('view_method')
-            lessons = Lesson.objects.filter(lTeacher_id=teacher,lDate__range=(since,to)).order_by('lDate', 'lTime')
+            lessons = filter_lessons(teacher, since, to)
             
             direct_url = reverse(
                 'show_rasp',
@@ -58,7 +62,7 @@ def info(request):
 
 def show_rasp(request,since,to,teacher,method):
     #  Результат, доступный по прямой ссылке
-    lessons = Lesson.objects.filter(lTeacher=teacher,lDate__range=(since,to)).order_by('lDate', 'lTime')
+    lessons = filter_lessons(teacher, since, to)
     d_since = datetime.strptime(since, "%Y-%m-%d")
     d_to = datetime.strptime(to, "%Y-%m-%d")
     t = Teacher.objects.get(pk=teacher)
@@ -69,7 +73,7 @@ def show_rasp(request,since,to,teacher,method):
         t.tName.split(sep=' ')[2][0]
     )
     
-    export = ExportForm()
+    export = ExportForm(prefix='exp')
     direct_url = reverse(
         'show_rasp',
         kwargs={
@@ -102,34 +106,38 @@ class TeacherAutocomplete(autocomplete.Select2QuerySetView):
 
         return qs
 
-# Текстовый e-mail
-'''
-def send_text_email(request, mailto):
-    content = 'TEST MAIL'
-    res = send_mail('Расписание занятий СПбГЭУ', content, 'unecon.schedule@yandex.ru', ['pyatinson@gmail.com',])
-    return render(request, 'main/mail_sent.html', {'mailto': mailto })
-'''
-def send_text_email(request):
+def send_email(request):
     if request.method=="POST":
-        export = ExportForm(request.POST)
-        addr = request.POST.get('exp-email_address','fuckup')
-        cont = request.POST.get('exp-result_url','fuckup')
-        print(addr)
-        print(cont)
-        print(export['email_address'].value())
-        print(export.is_valid())
-        if export.is_valid():
-            print('valid export form')
-            content = 'TEST MAIL'
-            #res = send_mail('Расписание занятий СПбГЭУ', content, 'unecon.schedule@yandex.ru', ['pyatinson@gmail.com',])
-            #return render(request, 'main/mail_sent.html', { 'export': export })
-            return HttpResponse("VALID EXPORT")
-        else:
-            print("FORM ERRORS: \n"+str(export.errors))
-            content = urlopen(cont).read()
-            res = send_mail('Расписание занятий СПбГЭУ', content.decode('utf-8'), 'unecon.schedule@yandex.ru', [addr,])
-            return HttpResponse("INVALID EXPORT")
+        addr = request.POST.get('exp-email_address', None)
+        result_url = request.POST.get('exp-result_url', None)
+        
+        since, to, t_id, method = result_url.split(sep='/')[4:8]
+        lessons = filter_lessons(t_id,since,to)
+        
+        d_since = datetime.strptime(since, "%Y-%m-%d")
+        d_to = datetime.strptime(to, "%Y-%m-%d")
+
+        t = Teacher.objects.get(pk=t_id)
+
+        mail_context = {
+            't': t,
+            'since': d_since,
+            'to': d_to,
+            'method': method,
+            'lessons': lessons
+        }
+
+        msg_text = render_to_string('email/email.txt', mail_context)
+        msg = render_to_string('email/email.html', mail_context)
+        send_mail('Расписание занятий СПбГЭУ', msg_text, 'unecon.schedule@yandex.ru', [addr,], html_message=msg)
+        
+        context = {
+            't': t,
+            'since': d_since,
+            'to': d_to,
+            'addr': addr
+        }
+        return render(request, 'main/mail_sent.html', context)
+        
     else:
-        print('get method used')
-        #return render(request, 'main/mail_sent.html',)
-        return HttpResponse("GET EXPORT")
+        raise Http404('GET—запрос к служебной странице запрещен.')

@@ -1,0 +1,16 @@
+{{ t }}, добрый день!
+
+Ваше расписание занятий с {{ since }} по {{ to }}:
+
+{% for l in lessons %}
+{{ l.lDate }}, {{ l.lTime }}, ауд. {{ l.lAud }}
+{{ l.lName }}
+группа {{ l.lGroup }}
+{% if l.lComment|length > 1 %}
+Комментарий: {{ l.lComment }}
+{% endif %}
+
+{% empty %}
+Расписание на эти дни не найдено.
+
+{% endfor %}

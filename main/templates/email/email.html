@@ -1,15 +1,11 @@
-{% extends 'main/base.html' %}
-{% load static %}
+<html>
 
-{% block styles %}
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script type="text/javascript" src="{% static 'js/show_rasp.js' %}"></script>
-{% endblock %}
+<head>
+	<meta charset="utf-8"></meta>
+</head>
 
-{% block content %}
-
-<div id="query-result">
+<body>
+	<div id="query-result">
       
     <div class='title-reqular'>
       <h3>{{ t }}, расписание с {{ since|date:"d.m.Y" }} по {{ to|date:"d.m.Y" }}. </h3>
@@ -54,7 +50,7 @@
         <td>{{ l.lAud }}</td>
         <td>{{ l.lGroup }}</td>
         <td>{{ l.lName }}</td>
-        <td class="comment-td">{{ l.lComment }}</td>
+        <td>{{ l.lComment }}</td>
       </tr>
       
       {% empty %}
@@ -70,19 +66,6 @@
   
   {% endif %}  
 </div>
+</body>
 
-{% if export %}
-  <div id="export">
-    <form id='export-form' method="POST" action="/send/text/">
-      {% csrf_token %}
-      {{ export.as_table }}
-      <input type="submit" value="Отправить" class="btn btn-sm" />
-    </form>
-  </div>
-{% endif %}
-
-{% endblock %}
-
-{% block footer %}
-{{ form.media }}
-{% endblock %}
+</html>

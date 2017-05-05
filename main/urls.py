@@ -14,12 +14,6 @@ urlpatterns = [
     	name='teacher_autocomplete'),
    
     url(r'^send/text/$',
-    	views.send_text_email,
-    	name='send_text_email'),
+    	views.send_email,
+    	name='send_email'),
  ]
-
-'''
-url(r'^send/text/(?P<mailto>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,4})/$',
-	views.send_text_email,
-	name='send_text_email'),
-'''

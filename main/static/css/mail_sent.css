@@ -1,0 +1,13 @@
+#mail_notification {
+	margin-top: 20px; 
+	margin-left: 3.5%;
+}
+
+#go_next {
+    text-align: center;
+    line-height: 60%;
+}
+
+#go_next a {
+    background-color: #f4f5f7;
+}

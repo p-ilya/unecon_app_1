@@ -1,17 +1,26 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/mail_sent.css' %}">
+{% endblock %}
+
 {% block content %}
 
-<div id="export">
-	<form id='export-form' method="POST" action="/send/text/">
-	  {% csrf_token %}
-	  {{ export.as_table }}
-	  <input type="submit" value="Отправить" class="btn btn-sm" />
-	</form>
+<div id='mail_notification'>
+	<h3>Расписание занятий успешно отправлено на адрес {{ addr }}.<h3>
+	<h4>Параметры:</h4>
+	<p>
+	Преподаватель: {{ t }}<br>
+	Дата, с: {{ since|date:"d.m.Y" }}<br>
+	Дата, по: {{ to|date:"d.m.Y" }}
+	</p>
 </div>
 
-An e-mail has been sent to. Yay!
+<div id="go_next">
+	<a href="/rasp/" class="btn btn-lg">К расписаниям</a>
+	<a href="/" class="btn btn-lg">На главную</a>
+</div>
 
 {% endblock %}
 
