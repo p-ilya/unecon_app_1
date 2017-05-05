@@ -5,30 +5,33 @@ $(document).ready(function() {
 	var $criteriaForm = $('#criteria-form');
 	var top = $($criteriaForm).offset().top;
 
-	/* форма как боковой слайдер
-	var sideMenu = $('<input type="button" id="sideMenuBtn" value="Критерии" class="btn"/>');
+	/* В случае,если область просмотра шириной менее 580px, сделать меню сворачиваемым */
+	var hiddenMenu = $('<button type="button" id="hiddenMenuBtn" class="btn btn-sm btn-block">Показать/скрыть критерии</button>');
 	
-	$window.resize(function() {
-		if ($window.width() < 550) {
-			$('#criteria-form').prepend(sideMenu);
-			$('#criteria').toggleClass('sidenav');
+	$window.ready(function() {
+		if ($window.width() < 580) {
+			$('#criteria-form').append(hiddenMenu);
+
+			$("#hiddenMenuBtn").click(function() {
+		  		if (!$('#criteria').is(':animated')) {
+		  			$("#criteria").toggle('slow');
+		  		}
+			});
 		}
-		if ($window.width() >= 550) {
-			$('#sideMenuBtn').remove();
+		if ($window.width() >= 580) {
+			$('#hiddenMenuBtn').remove();
+			$('#criteria').show();
 		}
 	}); 
 
-	$('#sideMenuBtn').click(function() {
-		$('#criteria').animate({'left': '0px'});
-	});
-	*/
+	
 	/* форма прилипает к верху области просмотра */
 	$window.scroll(function() {
 		$criteriaForm.toggleClass('stick-top', 
 			$window.scrollTop() > top);
 
 		if ($window.scrollTop() > top) {
-			$('#query-result').css('padding-top', $criteriaForm.height() );
+			$('#query-result').css('padding-top', $criteriaForm.height()+18 );
 		}
 		if ($window.scrollTop() <= top) {
 			$('#query-result').css('padding-top', 0);
@@ -39,6 +42,7 @@ $(document).ready(function() {
 			dateFormat:'dd.mm.yy',
 		});
 
+	/* Если в комментариях есть ОТМЕНА, строка становится красной */
 	$('.comment-td').each(function() {
 		var $this = $(this);
 		if ($this.text().includes('ОТМЕНА')) {

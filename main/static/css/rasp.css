@@ -2,11 +2,10 @@
     float: top;
     padding-top: 10px;
     padding-bottom: 10px;
-    width: 96.5%;
     min-width: 200px;
     margin-left: 3%;
     margin-right: 3%;
-    background: #FFFFFF;
+    background: #ffffff;
 }
 
 .title-regular {
@@ -30,11 +29,15 @@
 #criteria-form.stick-top {
     position: fixed;
     top: 0;
+    margin-left: 3%;
+    margin-right: 3%;
+    padding-right: 3%;
+    width: 94%;
 }
 
 #query-result {
     margin-left: 3.5%;
-    margin-right: 3%;
+    margin-right: 3.5%;
     max-width: 1000px;
     color: black;
 }
@@ -42,29 +45,15 @@
 #export-form {
     bottom: 0;
     margin-left: 3.5%;
-    margin-right: 3%;
+    margin-right: 3.5%;
 }
 
-@media screen and (max-width: 550px) {
-    html {
-        font-size: 75%;
-    }
+@media screen and (max-width: 580px) {
 
-    .sidenav {
-        height: 100%;
-        width: 250px;
-        position: absolute;
-        z-index: 1;
-        top: 100px;
-        left: -250px;
-        background-color: #f4f5f7;
-        overflow-x: hidden; /* Disable horizontal scroll */
-    }
-
-    #sideMenuBtn {
-        transform: rotate(-90deg);
-        position: fixed;
-        left: 0px;
-        top: 50%;
+    #hiddenMenuBtn {
+        margin-top: 10px;
+        margin-left: 3.5%;
+        margin-right: 3.5%;
+        width: 85%;
     }
 }
