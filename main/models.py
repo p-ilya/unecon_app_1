@@ -39,6 +39,16 @@ class Teacher(models.Model):
                              max_length=100)
     tCafedra = models.ForeignKey(Cafedra,
                                  verbose_name='Кафедра')
+    tTitle = models.CharField(
+        'Должность',
+        max_length=45,
+        blank=True
+        )
+    tDegree = models.CharField(
+        'Ученая степень',
+        max_length=45,
+        blank=True
+        )
     tEmail = models.EmailField('E-mail',
                                blank=True)
 
