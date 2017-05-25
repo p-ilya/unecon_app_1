@@ -1,6 +1,8 @@
 from django.db import models
 
 # Create your models here.
+
+
 class Faculty(models.Model):
     fFullName = models.CharField('Полное название',
                                  max_length=250)
@@ -9,8 +11,10 @@ class Faculty(models.Model):
 
     def __str__(self):
         return self.fShortName
+
     def __repr__(self):
         return self.fFullName
+
 
 class Cafedra(models.Model):
     cFaculty = models.ForeignKey(Faculty,
@@ -23,6 +27,7 @@ class Cafedra(models.Model):
     def __str__(self):
         return self.cFullName
 
+
 class Group(models.Model):
     idGroup = models.CharField('Название группы',
                                max_length=45,
@@ -34,6 +39,7 @@ class Group(models.Model):
     def __str__(self):
         return self.idGroup
 
+
 class Teacher(models.Model):
     tName = models.CharField('ФИО преподавателя',
                              max_length=100)
@@ -43,23 +49,24 @@ class Teacher(models.Model):
         'Должность',
         max_length=45,
         blank=True
-        )
+    )
     tDegree = models.CharField(
         'Ученая степень',
         max_length=45,
         blank=True
-        )
+    )
     tEmail = models.EmailField('E-mail',
                                blank=True)
 
     def __str__(self):
         return self.tName
 
+
 class Lesson(models.Model):
     lDate = models.DateField(auto_now=False)
     lName = models.CharField(max_length=250)
     lTeacher = models.ForeignKey(Teacher)
-    lGroup = models.ForeignKey(Group)
+    lGroup = models.CharField(max_length=250)
     lTime = models.CharField(max_length=45)
     lAud = models.CharField('Аудитория',
                             max_length=45)
@@ -69,6 +76,3 @@ class Lesson(models.Model):
         return ('{0} {1}, {2}'.format(self.lDate,
                                       self.lTime,
                                       self.lTeacher))
-
-
-    
