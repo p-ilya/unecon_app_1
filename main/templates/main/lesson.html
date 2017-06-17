@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block styles %}
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" src="{% static 'js/show_rasp.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="/lesson_saved/" id="lesson-form">
+{% csrf_token %}
+
+{{ form.as_p }}
+<button type="submit" class="save btn btn-default">Сохранить</button>
+</form>
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}

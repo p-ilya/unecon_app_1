@@ -48,15 +48,25 @@ class Teacher(models.Model):
     tTitle = models.CharField(
         'Должность',
         max_length=45,
-        blank=True
+        blank=True,
+        default='не указана'
     )
     tDegree = models.CharField(
         'Ученая степень',
         max_length=45,
+        blank=True,
+        default='не указана'
+    )
+    tEmail = models.EmailField(
+        'E-mail',
+        blank=True,
+        default='не указан'
+    )
+    tPhoto = models.CharField(
+        'Фотография',
+        max_length=30,
         blank=True
     )
-    tEmail = models.EmailField('E-mail',
-                               blank=True)
 
     def __str__(self):
         return self.tName

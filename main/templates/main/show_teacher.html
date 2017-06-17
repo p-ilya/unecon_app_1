@@ -1,0 +1,75 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/show_teacher.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="teacher_info">
+  <!--
+  <div class="t-photo" style="max-width: 300px;">
+	  {% if t.tPhoto %}
+	    <img class="img-responsive" src="{% static t.tPhoto %}" />
+	  {% else %}
+	    <img class="img-responsive" src="{% static 'images/teachers/no_photo.jpg' %}" />
+	  {% endif %}
+  </div>  
+  -->
+  <div class="t_info">
+  <h1>{{ t.tName }}</h1>
+  <p>Ученая степень: {{ t.tDegree }}</p>
+  <p>Должность: {{ t.tTitle }}</p>
+  <p>Кафедра: {{ t.tCafedra }}</p>
+  <p>Адрес e-mail: {{ t.tEmail }}</p>
+  <p style="display: inline-block;">Список курсов:
+    {% for l in l_names %}
+    <div class="l_name">
+    	<a href="">{{ l }}</a>
+    </div>
+    {% empty %}
+    не найден.
+    {% endfor %}
+  </p>
+  
+  <p>Ближайшие занятия:</p>
+  {% if l_soon|length > 0 %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr>
+        <th>Дата</th>
+        <th>Время</th>
+        <th>Ауд.</th>
+        <th>Группа</th>
+        <th>Дисциплина</th>
+        <th>Комментарии</th>
+      </tr></thead>
+
+      <tbody>
+      {% for l in l_soon %}
+        <tr>
+          <td>{{ l.lDate }}</td>
+          <td>{{ l.lTime }}</td>
+          <td>{{ l.lAud }}</td>
+          <td>{{ l.lGroup }}</td>
+          <td>{{ l.lName }}</td>
+          <td class='comment-td'>{{ l.lComment }}</td>
+        </tr>
+      
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>На ближайший месяц занятий не найдено.</p>
+    {% endif %}
+
+  </div>
+</div>
+
+<div class="buttons-index">
+  <p>
+    <a href="{% url 'teacher_list' %}" class="btn btn-lg">Список преподавателей</a></p>
+  <p>
+    <a href="{% url 'index' %}" class="btn btn-lg">На главную</a></p>
+</div>
+{% endblock %}

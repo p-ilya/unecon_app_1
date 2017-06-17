@@ -2,16 +2,17 @@ from dal import autocomplete
 from datetime import datetime, timedelta
 
 from django import forms
-from django.forms.widgets import RadioSelect, SelectDateWidget
+from django.forms.widgets import RadioSelect
 
-from .models import Teacher
+from .models import Teacher, Cafedra
+
 
 class CriteriaForm(forms.Form):
 
     class Meta:
         model = Teacher
-        fields = ('id','tName',)
-    
+        fields = ('id', 'tName',)
+
     teachers = Teacher.objects.order_by('tName')
     '''
     #  Old, without autocomplete
@@ -37,24 +38,25 @@ class CriteriaForm(forms.Form):
         #  widget=SelectDateWidget(years=[2016,2017,2018,2019,2020,2021])
         widget=forms.TextInput(
             attrs={
-            'class': 'datepicker',
-        })
-        )
+                'class': 'datepicker',
+            })
+    )
 
     date_to = forms.DateField(
-        initial=(datetime.now()+timedelta(days=7)).strftime('%d.%m.%Y'),
+        initial=(datetime.now() + timedelta(days=7)).strftime('%d.%m.%Y'),
         input_formats=['%d.%m.%Y'],
         label="Дата, по:",
         widget=forms.TextInput(attrs={
             'class': 'datepicker',
         })
-        )
+    )
 
     view_method = forms.ChoiceField(
         widget=RadioSelect,
         label="Отобразить как:",
-        choices=[('1', 'список'),('2', 'таблицу')],
+        choices=[('1', 'список'), ('2', 'таблицу')],
         initial='1')
+
 
 class ExportForm(forms.Form):
     """Footer form for export features"""
@@ -62,3 +64,23 @@ class ExportForm(forms.Form):
         label='Прямая ссылка:',
         required=False,)
     email_address = forms.EmailField(label='Адрес e-mail:',)
+
+
+class TeacherFilterForm(forms.Form):
+
+    class Meta:
+        model = Cafedra
+        fields = ('id', 'cFullName',)
+
+    ch_cafedra = forms.ModelChoiceField(
+        queryset=Cafedra.objects.order_by('cFullName'),
+        label='Выбрать кафедру:',
+        widget=autocomplete.ModelSelect2(url='cafedra_autocomplete')
+    )
+
+
+class TeacherEditForm(forms.ModelForm):
+
+    class Meta:
+        model = Teacher
+        fields = ('tName', 'tCafedra', 'tTitle', 'tDegree', 'tEmail')

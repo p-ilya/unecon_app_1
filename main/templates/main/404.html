@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/404.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Страница не найдена.</h1>
+
+<div class="buttons-index">
+  <p>
+    <a href="{% url 'index' %}" class="btn btn-lg">На главную</a></p>
+</div>
+
+{% endblock %}

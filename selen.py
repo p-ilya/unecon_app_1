@@ -12,7 +12,6 @@ from selenium.common.exceptions import NoSuchElementException
 
 # noinspection PyByteLiteral
 class Unecon_Downloader():
-    # абсолютный путь к драйверу
     display = Display(visible=0, size=(800, 600))
     display.start()
     driver = webdriver.Chrome()
@@ -28,7 +27,9 @@ class Unecon_Downloader():
         ))
         select.select_by_value('label_0')
 
-        submit_bttn = self.driver.find_element_by_id('edit-submit-schedule-view')
+        submit_bttn = self.driver.find_element_by_id(
+            'edit-submit-schedule-view'
+        )
         time.sleep(5)
         submit_bttn.click()
         time.sleep(5)
@@ -37,7 +38,7 @@ class Unecon_Downloader():
     def parse_xlsx_info(info):
         parts = info.rsplit(' - ')
 
-        form, fac, typ, kurs = ('?','?','?','?')
+        form, fac, typ, kurs = ('?', '?', '?', '?')
         for p in parts:
             if re.search(r'\w*форма$', p): form = p
             elif re.search(r'\w*[Фф]акультет\w*', p): fac = p
@@ -50,15 +51,15 @@ class Unecon_Downloader():
         links = []
         rows = self.driver.find_elements_by_xpath(
             '//*[@id="content"]/div[2]/div[2]/table/tbody/tr'
-            )
-        
+        )
+
         for r in rows:
             link = r.find_element_by_xpath('.//td[1]/div/ul/li/a')
             link_text = link.get_attribute('href')
             info = r.find_element_by_xpath('.//td[2]').text
             form, fac, typ, kurs = self.parse_xlsx_info(info)
             upload_date = r.find_element_by_xpath('.//td[3]').text
-            destination = 'files/'+link_text.rsplit('/', 1)[1]
+            destination = 'files/' + link_text.rsplit('/', 1)[1]
             links.append({
                 'link': link_text,
                 'local': destination,
@@ -67,9 +68,8 @@ class Unecon_Downloader():
                 'sch_type': typ,
                 'kurs': kurs,
                 'upload': upload_date
-                })
+            })
 
-       
         return links
 
     def next_page(self):
@@ -79,7 +79,6 @@ class Unecon_Downloader():
             next_page_bttn.click()
             time.sleep(5)
             return True
-        
         except NoSuchElementException as e:
             # print('Cant flip to next page due to this:\n' + e.msg)
             return False
@@ -120,10 +119,11 @@ class Unecon_Downloader():
                 self.collected_links.append(l)
 
         print('Links total: {}'.format(len(self.collected_links)))
-        for l in self.collected_links: print(str(l) + '\n\n')
+        # for l in self.collected_links: print(str(l) + '\n\n')
         self.close_page()
         self.driver.quit()
         self.download_files()
+
 
 if __name__ == '__main__':
     downloader = Unecon_Downloader()

@@ -48,6 +48,9 @@ $(document).ready(function() {
 		if ($this.text().includes('ОТМЕНА')) {
 			$this.parent().css('background-color', '#ff6666');
 		}
+		if ($this.text().includes('ИЗМЕНЕНИЕ')) {
+			$this.parent().css('background-color', '#d7f442');
+		}
 	});
 });
 
