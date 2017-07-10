@@ -5,13 +5,15 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 from .forms import CriteriaForm, ExportForm, TeacherFilterForm, TeacherEditForm
 from .models import Lesson, Teacher, Cafedra
 
 
 def filter_lessons(teacher, since, to):
     lessons = Lesson.objects.filter(
-        lTeacher_id=teacher, lDate__range=(since, to)).order_by('lDate', 'lTime')
+        lTeacher_id=teacher,
+        lDate__range=(since, to)).order_by('lDate', 'lTime')
     return lessons
 
 # Create your views here.
@@ -128,6 +130,7 @@ def show_teacher(request, teacher):
     return render(request, 'main/show_teacher.html', context)
 
 
+@login_required
 def edit_teacher(request, teacher):
     teacher_ins = get_object_or_404(Teacher, pk=int(teacher))
     if request.method == 'POST':

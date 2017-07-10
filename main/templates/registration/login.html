@@ -1,0 +1,27 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if form.errors %}
+        <div class="errors">Ошибка ввода учетных данных.</div>
+    {% endif %}
+
+    <div class="outer">
+    <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+        <div class="line">
+            {{ form.username.label_tag }}<br>{{ form.username }}
+        </div>
+        <div class="line">
+            {{ form.password.label_tag }}<br>{{ form.password }}
+        </div>
+        <br>
+        <input type="submit" value="Вход" class="btn btn-lg btn-primary"/>
+        <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+    </div>
+{% endblock %}
