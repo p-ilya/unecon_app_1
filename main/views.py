@@ -172,29 +172,6 @@ def teacher_list(request):
     return render(request, 'main/teacher_list.html', context)
 
 
-# autocomplete view
-class TeacherAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-
-        qs = Teacher.objects.all()
-
-        if self.q:
-            qs = qs.filter(tName__istartswith=self.q)
-
-        return qs
-
-
-class CafedraAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-
-        qs = Cafedra.objects.all()
-
-        if self.q:
-            qs = qs.filter(cFullName__istartswith=self.q)
-
-        return qs
-
-
 def send_email(request):
     if request.method == "POST":
         addr = request.POST.get('exp-email_address', None)
@@ -231,3 +208,28 @@ def send_email(request):
 
     else:
         raise Http404('GET—запрос к служебной странице запрещен.')
+
+
+# autocomplete views
+
+class TeacherAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+
+        qs = Teacher.objects.all()
+
+        if self.q:
+            qs = qs.filter(tName__istartswith=self.q)
+
+        return qs
+
+
+class CafedraAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+
+        qs = Cafedra.objects.all()
+
+        if self.q:
+            qs = qs.filter(cFullName__istartswith=self.q)
+
+        return qs
+
