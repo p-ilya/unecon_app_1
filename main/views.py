@@ -1,12 +1,13 @@
 from dal import autocomplete
-from datetime import datetime
-from django.shortcuts import render, redirect
+from datetime import datetime, timedelta
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
-from .forms import CriteriaForm, ExportForm
-from .models import Lesson, Teacher
+from django.contrib.auth.decorators import login_required
+from .forms import CriteriaForm, ExportForm, TeacherFilterForm, TeacherEditForm
+from .models import Lesson, Teacher, Cafedra
 
 
 def filter_lessons(teacher, since, to):
@@ -105,18 +106,69 @@ def show_rasp(request, since, to, teacher, method):
     }
     return render(request, 'main/show_rasp.html', context)
 
-# autocomplete view
+
+def show_teacher(request, teacher):
+    t_info = get_object_or_404(Teacher, pk=int(teacher))
+
+    l_names = Lesson.objects.filter(
+        lTeacher_id=int(teacher)
+    ).order_by().values_list(
+        'lName', flat=True
+    ).distinct()
+
+    lessons_soon = filter_lessons(
+        int(teacher),
+        datetime.now().strftime('%Y-%m-%d'),
+        (datetime.now() + timedelta(days=31)).strftime('%Y-%m-%d')
+    )[:5]
+    context = {
+        't': t_info,
+        'l_names': l_names,
+        'l_soon': lessons_soon
+    }
+    return render(request, 'main/show_teacher.html', context)
 
 
-class TeacherAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
+@login_required
+def edit_teacher(request, teacher):
+    teacher_ins = get_object_or_404(Teacher, pk=int(teacher))
+    if request.method == 'POST':
+        form = TeacherEditForm(request.POST, instance=teacher_ins)
+        if form.is_valid():
+            teacher = form.save()
+            context = {
+                't': teacher_ins,
+            }
+            return redirect('show_teacher', teacher=teacher.id)
+            #return render(request, 'main/show_teacher.html', context)
+    else:
+        form = TeacherEditForm(instance=teacher_ins)
+        context = {
+            't': teacher_ins,
+            'form': form
+        }
+    return render(request, 'main/edit_teacher.html', context)
 
-        qs = Teacher.objects.all()
 
-        if self.q:
-            qs = qs.filter(tName__istartswith=self.q)
-
-        return qs
+def teacher_list(request):
+    if request.method == "POST":
+        form = TeacherFilterForm(request.POST)
+        if form.is_valid():
+            cafedra = form.cleaned_data.get('ch_cafedra')
+            t_list = Teacher.objects.filter(tCafedra=cafedra.id)
+            context = {
+                'form': form,
+                't_list': t_list
+            }
+            return render(request, 'main/teacher_list.html', context)
+    else:
+        form = TeacherFilterForm()
+        t_list = Teacher.objects.all()
+        context = {
+            'form': form,
+            't_list': t_list
+        }
+    return render(request, 'main/teacher_list.html', context)
 
 
 def send_email(request):
@@ -155,3 +207,27 @@ def send_email(request):
 
     else:
         raise Http404('GET—запрос к служебной странице запрещен.')
+
+
+# autocomplete views
+
+class TeacherAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+
+        qs = Teacher.objects.all()
+
+        if self.q:
+            qs = qs.filter(tName__istartswith=self.q)
+
+        return qs
+
+
+class CafedraAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+
+        qs = Cafedra.objects.all()
+
+        if self.q:
+            qs = qs.filter(cFullName__istartswith=self.q)
+
+        return qs
