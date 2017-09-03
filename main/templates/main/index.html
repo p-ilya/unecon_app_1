@@ -19,18 +19,8 @@
   <p>
     <a href="{% url 'teacher_list' %}" class="btn btn-lg">Преподаватели</a></p>
   <p>
-    <a href="{% url 'teacher_list' %}" class="btn btn-lg">Преподаватели</a></p>
-  <p>
     <a href="{% url 'info' %}" class="btn btn-lg">Справка</a></p>
 </div>
-{% if not user.is_authenticated %}
-  <br><br>Есть учетная запись?<br>
-  <a href="{% url 'login' %}" class="btn btn-lg">Авторизация</a></p>
-{% else %}
-  <p>Вы авторизованы: {{ user.username }}</p>
-  <a href="{% url 'logout' %}" class="btn btn-md">Выйти из учетной записи</a>
-{% endif %}
-
 
 {% if not user.is_authenticated %}
 <div class="login_fields">

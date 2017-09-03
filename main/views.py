@@ -2,7 +2,7 @@ from dal import autocomplete
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
-from django.http import HttpResponse, Http404
+from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
@@ -46,10 +46,10 @@ def rasp(request):
             full_direct_url = request.build_absolute_uri(direct_url)
             export = ExportForm(
                 initial={'result_url': full_direct_url}, prefix="exp")
-            #  отладка
+            # отладка
             # print(teacher)
-            #print('{0} - {1}'.format(since, to))
-            #print('METHOD '+method)
+            # print('{0} - {1}'.format(since, to))
+            # print('METHOD '+method)
             # print(lessons)
 
             context = {
@@ -76,12 +76,6 @@ def show_rasp(request, since, to, teacher, method):
     d_since = datetime.strptime(since, "%Y-%m-%d")
     d_to = datetime.strptime(to, "%Y-%m-%d")
     t = Teacher.objects.get(pk=teacher)
-    #  ФИО в формате Фамилия И.О.
-    t_format = '{0} {1}.{2}.'.format(
-        t.tName.split(sep=' ')[0],
-        t.tName.split(sep=' ')[1][0],
-        t.tName.split(sep=' ')[2][0]
-    )
 
     export = ExportForm(prefix='exp')
     direct_url = reverse(
@@ -94,14 +88,13 @@ def show_rasp(request, since, to, teacher, method):
         })
     export.fields['result_url'].initial = request.build_absolute_uri(
         direct_url)
-    # print(export.as_table())
 
     context = {
         'lessons': lessons,
         'method': method,
         'since': d_since,
         'to': d_to,
-        't': t_format,
+        't': t.tNameShort,
         't_id': teacher,
         'export': export
     }
@@ -111,17 +104,20 @@ def show_rasp(request, since, to, teacher, method):
 def show_teacher(request, teacher):
     t_info = get_object_or_404(Teacher, pk=int(teacher))
 
+    #  Список дисциплин преподавателя
     l_names = Lesson.objects.filter(
         lTeacher_id=int(teacher)
     ).order_by().values_list(
         'lName', flat=True
     ).distinct()
 
+    #  Ближайшие 5 занятий
     lessons_soon = filter_lessons(
         int(teacher),
         datetime.now().strftime('%Y-%m-%d'),
         (datetime.now() + timedelta(days=31)).strftime('%Y-%m-%d')
     )[:5]
+
     context = {
         't': t_info,
         'l_names': l_names,
@@ -141,7 +137,7 @@ def edit_teacher(request, teacher):
                 't': teacher_ins,
             }
             return redirect('show_teacher', teacher=teacher.id)
-            #return render(request, 'main/show_teacher.html', context)
+            # return render(request, 'main/show_teacher.html', context)
     else:
         form = TeacherEditForm(instance=teacher_ins)
         context = {
@@ -173,41 +169,41 @@ def teacher_list(request):
 
 
 def send_email(request):
-    if request.method == "POST":
-        addr = request.POST.get('exp-email_address', None)
-        result_url = request.POST.get('exp-result_url', None)
-
-        since, to, t_id, method = result_url.split(sep='/')[4:8]
-        lessons = filter_lessons(t_id, since, to)
-
-        d_since = datetime.strptime(since, "%Y-%m-%d")
-        d_to = datetime.strptime(to, "%Y-%m-%d")
-
-        t = Teacher.objects.get(pk=t_id)
-
-        mail_context = {
-            't': t,
-            'since': d_since,
-            'to': d_to,
-            'method': method,
-            'lessons': lessons
-        }
-
-        msg_text = render_to_string('email/email.txt', mail_context)
-        msg = render_to_string('email/email.html', mail_context)
-        send_mail('Расписание занятий СПбГЭУ', msg_text,
-                  'unecon.schedule@yandex.ru', [addr, ], html_message=msg)
-
-        context = {
-            't': t,
-            'since': d_since,
-            'to': d_to,
-            'addr': addr
-        }
-        return render(request, 'main/mail_sent.html', context)
-
-    else:
+    if request.method == "GET":
         raise Http404('GET—запрос к служебной странице запрещен.')
+
+    # if request.method == "POST":
+    addr = request.POST.get('exp-email_address', None)
+    result_url = request.POST.get('exp-result_url', None)
+
+    since, to, t_id, method = result_url.split(sep='/')[4:8]
+    lessons = filter_lessons(t_id, since, to)
+
+    d_since = datetime.strptime(since, "%Y-%m-%d")
+    d_to = datetime.strptime(to, "%Y-%m-%d")
+
+    t = Teacher.objects.get(pk=t_id)
+
+    mail_context = {
+        't': t,
+        'since': d_since,
+        'to': d_to,
+        'method': method,
+        'lessons': lessons
+    }
+
+    msg_text = render_to_string('email/email.txt', mail_context)
+    msg = render_to_string('email/email.html', mail_context)
+    send_mail('Расписание занятий СПбГЭУ', msg_text,
+              'unecon.schedule@yandex.ru', [addr, ], html_message=msg)
+
+    context = {
+        't': t,
+        'since': d_since,
+        'to': d_to,
+        'addr': addr
+    }
+    return render(request, 'main/mail_sent.html', context)
 
 
 # autocomplete views
@@ -232,4 +228,3 @@ class CafedraAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(cFullName__istartswith=self.q)
 
         return qs
-

@@ -81,6 +81,16 @@ class Teacher(models.Model):
     def __str__(self):
         return self.tName
 
+    def short_name(self):
+        last, first, patr = self.tName.split(sep=' ')
+        return '{0} {1}.{2}.'.format(
+            last,
+            first[0],
+            patr[0]
+        )
+
+    tNameShort = property(short_name)
+
 
 class Lesson(models.Model):
     lDate = models.DateField(auto_now=False)
@@ -93,6 +103,10 @@ class Lesson(models.Model):
     lComment = models.TextField(blank=True)
 
     def __str__(self):
-        return ('{0} {1}, {2}'.format(self.lDate,
-                                      self.lTime,
-                                      self.lTeacher))
+        return (
+            '{0} {1}, {2}'.format(
+                self.lDate,
+                self.lTime,
+                self.lTeacher
+            )
+        )

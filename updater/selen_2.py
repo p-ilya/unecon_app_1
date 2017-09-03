@@ -1,12 +1,24 @@
 from urllib.request import urlretrieve
+from datetime import datetime
 import time
 import re
-import sqlite3
 
 from pyvirtualdisplay import Display
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
+
+# from models import UneconExcelFile
+
+import os
+import sys
+import django
+sys.path.append('/home/elias/Code/env_unecon/unecon_app_1/')
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "UneconApp.settings")
+
+django.setup()
+from updater.models import UneconExcelFile
 
 
 class Unecon_Downloader():
@@ -14,7 +26,7 @@ class Unecon_Downloader():
     display.start()
     driver = webdriver.Chrome()
     collected_links = []
-    con = sqlite3.connect('downloaded.db')
+    # con = sqlite3.connect('downloaded.db')
 
     def load_schedule_page(self):
         url = 'http://unecon.ru/schedule'
@@ -38,14 +50,18 @@ class Unecon_Downloader():
 
         form, fac, typ, kurs = ('?', '?', '?', '?')
         for p in parts:
-            if re.search(r'\w*форма$', p): form = p
-            elif re.search(r'\w*[Фф]акультет\w*', p): fac = p
-            elif re.search(r'\w*расписание', p): typ = p
-            elif re.search(r'\w*курс', p): kurs = p
+            if re.search(r'\w*форма$', p):
+                form = p
+            elif re.search(r'\w*[Фф]акультет\w*', p):
+                fac = p
+            elif re.search(r'\w*расписание', p):
+                typ = p
+            elif re.search(r'\w*курс', p):
+                kurs = p
         return form, fac, typ, kurs
 
     def retrieve_links(self):
-        #stable '//*[@id="content"]/div[2]/div[2]/table/tbody/tr/td[1]/div/ul/li/a'
+        # stable '//*[@id="content"]/div[2]/div[2]/table/tbody/tr/td[1]/div/ul/li/a'
         links = []
         rows = self.driver.find_elements_by_xpath(
             '//*[@id="content"]/div[2]/div[2]/table/tbody/tr'
@@ -54,17 +70,18 @@ class Unecon_Downloader():
         for r in rows:
             link = r.find_element_by_xpath('.//td[1]/div/ul/li/a')
             link_text = link.get_attribute('href')
+            fname = link_text.rsplit('/', 1)[1]
             info = r.find_element_by_xpath('.//td[2]').text
             form, fac, typ, kurs = self.parse_xlsx_info(info)
             upload_date = r.find_element_by_xpath('.//td[3]').text
-            destination = 'files/' + link_text.rsplit('/', 1)[1]
+            # destination = 'files/' + link_text.rsplit('/', 1)[1]
             links.append({
                 'link': link_text,
-                'local': destination,
+                'name': fname,
                 'form': form,
                 'faculty': fac,
                 'sch_type': typ,
-                'kurs': kurs,
+                'course': kurs,
                 'upload': upload_date
             })
 
@@ -77,21 +94,22 @@ class Unecon_Downloader():
             next_page_bttn.click()
             time.sleep(5)
             return True
-        except NoSuchElementException as e:
-            # print('Cant flip to next page due to this:\n' + e.msg)
+        except NoSuchElementException:
             return False
 
     def download_files(self):
         s = 0
         for l in self.collected_links:
             try:
-                urlretrieve(l['link'], l['local'])
-                with self.con as db:
-                    db.row_factory = sqlite3.Row
-                    cur = db.cursor()
-                    cur.execute(
-                        'INSERT INTO files (URL, local, date, faculty, type, form, course) VALUES (:link, :local, :upload, :faculty, :sch_type, :form, :kurs);',
-                         l)
+                urlretrieve(l['link'], 'files/' + l['name'])
+                f = UneconExcelFile.objects.create(
+                    fileName=l['name'],
+                    pubDate=datetime.strptime(l['upload'], '%d.%m.%Y'),
+                    faculty=l['faculty'],
+                    scheduleType=l['sch_type'],
+                    scheduleForm=l['form'],
+                    scheduleYear=l['course'],
+                )
             except ValueError:
                 print('This strange error again.')
             s += 1
@@ -112,12 +130,14 @@ class Unecon_Downloader():
         # получаить ссылки с остальных страниц
         while True:
             a = self.next_page()
-            if not a: break
+            if not a:
+                break
             for l in self.retrieve_links():
                 self.collected_links.append(l)
 
         print('Links total: {}'.format(len(self.collected_links)))
-        # for l in self.collected_links: print(str(l) + '\n\n')
+        for l in self.collected_links:
+            print(str(l) + '\n\n')
         self.close_page()
         self.driver.quit()
         self.download_files()
@@ -126,6 +146,6 @@ class Unecon_Downloader():
 if __name__ == '__main__':
     downloader = Unecon_Downloader()
     downloader.scenario()
-    #downloader.load_schedule_page()
-    #tds = downloader.retrieve_links()
-    #downloader.driver.quit()
+    # downloader.load_schedule_page()
+    # tds = downloader.retrieve_links()
+    # downloader.driver.quit()

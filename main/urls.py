@@ -21,15 +21,15 @@ urlpatterns = [
         views.send_email,
         name='send_email'),
 
-    url(r'^teacher/$',
+    url(r'^teachers/$',
         views.teacher_list,
         name='teacher_list'),
 
-    url(r'^teacher/(?P<teacher>[0-9]+)',
+    url(r'^teachers/(?P<teacher>[0-9]+)',
         views.show_teacher,
         name='show_teacher'),
 
-    url(r'^teacher/edit/(?P<teacher>[0-9]+)',
+    url(r'^teachers/edit/(?P<teacher>[0-9]+)',
         views.edit_teacher,
         name='edit_teacher'),
 ]
